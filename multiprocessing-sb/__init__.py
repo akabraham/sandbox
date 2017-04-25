@@ -1,7 +1,8 @@
 from multiprocessing.dummy import Pool as ThreadPool
-from time import time
+from timeit import default_timer as timer
 
 import requests
+
 
 urls = [
     'https://www.google.com',
@@ -26,38 +27,39 @@ urls = [
 
 if __name__ == '__main__':
     # single thread
-    t0 = time()
+    print('Starting single thread ...')
+    t0 = timer()
     results = [requests.get(url) for url in urls]
-    t1 = time()
+    t1 = timer()
     print(results)
-    print('Took {} sec for {}'.format(t1 - t0, 'single thread'))
+    print('Took {} sec for single thread'.format(t1 - t0))
 
     # 2 threads
-    t0 = time()
+    print('Starting 2 threads ...')
+    t0 = timer()
     pool = ThreadPool(2)  # Make pool of workers
     results = pool.map(requests.get, urls)  # Open each url in its own thread
-    t1 = time()
-    print('Took {} sec for {}'.format(t1 - t0, '2 threads'))
     pool.close()  # Close the pool
     pool.join()  # Wait for work to finish
-    print('Pool joined. Done')
+    t1 = timer()
+    print('Took {} sec for 2 threads'.format(t1 - t0))
 
     # 4 threads
-    t0 = time()
-    pool = ThreadPool(4)  # Make pool of workers
-    results = pool.map(requests.get, urls)  # Open each url in its own thread
-    t1 = time()
-    print('Took {} sec for {}'.format(t1 - t0, '4 threads'))
-    pool.close()  # Close the pool
-    pool.join()  # Wait for work to finish
-    print('Pool joined. Done')
+    print('Starting 4 threads ...')
+    t0 = timer()
+    pool = ThreadPool(4)
+    results = pool.map(requests.get, urls)
+    pool.close()
+    pool.join()
+    t1 = timer()
+    print('Took {} sec for 4 threads'.format(t1 - t0))
 
     # 8 threads
-    t0 = time()
-    pool = ThreadPool(8)  # Make pool of workers
-    results = pool.map(requests.get, urls)  # Open each url in its own thread
-    t1 = time()
-    print('Took {} sec for {}'.format(t1 - t0, '8 threads'))
-    pool.close()  # Close the pool
-    pool.join()  # Wait for work to finish
-    print('Pool joined. Done')
+    print('Starting 8 threads ...')
+    t0 = timer()
+    pool = ThreadPool(8)
+    results = pool.map(requests.get, urls)
+    pool.close()
+    pool.join()
+    t1 = timer()
+    print('Took {} sec for 8 threads'.format(t1 - t0))
