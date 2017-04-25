@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from flask_sockets import Sockets
 
 
@@ -15,9 +15,6 @@ sockets = Sockets(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        print('Submitted a POST request')
-
     return render_template('index.html')
 
 
