@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Index</title>
+</head>
+<body>
+  <h1>Flask Socket Interactive</h1>
+
+  <h2>Send:</h2>
+  <form id="emit" method="POST" action="#">
+    <input type="text" id="emit_data" name="emit_data" placeholder="Message">
+    <input type="submit" value="Emit">
+  </form>
+
+  <h2>Receive:</h2>
+  <ol id="received"></ol>
+
+  <script>
+      var received = document.getElementById('received');
+      var emit = document.getElementById('emit');
+      var emit_data = document.getElementById('emit_data');
+
+      /** Print out websocket activity in HTML **/
+      var track = function(msg) {
+        var li = document.createElement('li');
+        li.innerText = new Date().toISOString() + ' ' + msg;
+        received.appendChild(li);
+      }
+
+      emit_data.focus();
+
+      console.log('Opening WebSocket connection ...');
+      // The '/echo' part must match the sockets route in python
+      const socket = new WebSocket('ws://' + window.location.host + '/echo');
+
+      socket.addEventListener('error', function() {
+        track('error event listener: error occurred');
+      });
+
+      // Connection opened
+      socket.addEventListener('open', function() {
+        track('open event listener: WebSocket connection is open');
+        socket.send('Hi this is the client');
+        track('sent message: Hi this is the client');
+      });
+
+      // Listen for messages
+      socket.addEventListener('message', function(evt) {
+        track('message event listener: ' + evt.data);
+      });
+
+      emit.onsubmit = function(evt) {
+        evt.preventDefault();
+        socket.send(emit_data.value);
+        console.log('Sent to server: ' + emit_data.value);
+        emit_data.value = '';
+        emit_data.focus();
+      };
+  </script>
+</body>
+</html>
